@@ -1,2 +1,2 @@
-# windows
-windows setup and config
+# config
+master config settings
