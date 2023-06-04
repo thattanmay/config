@@ -15,9 +15,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ]]--
 --[[
-    mpv_thumbnail_script.lua 0.5.1 - commit 100667f (branch master)
+    mpv_thumbnail_script.lua 0.5.2 - commit f82a221 (branch master)
     https://github.com/TheAMM/mpv_thumbnail_script
-    Built on 2022-11-03 16:39:12
+    Built on 2022-12-11 16:42:58
 ]]--
 local assdraw = require 'mp.assdraw'
 local msg = require 'mp.msg'
@@ -377,6 +377,8 @@ local thumbnailer_options = {
     mpv_profile = "",
     -- Hardware decoding
     mpv_hwdec = "no",
+    -- High precision seek
+    mpv_hr_seek = "yes",
     -- Output debug logs to <thumbnail_path>.log, ala <cache_directory>/<video_filename>/000000.bgra.log
     -- The logs are removed after successful encodes, unless you set mpv_keep_logs below
     mpv_logs = true,
@@ -452,6 +454,8 @@ local thumbnailer_options = {
 
     -- Allow thumbnailing network paths (naive check for "://")
     thumbnail_network = false,
+    -- Same as autogenerate_max_duration but for remote videos
+    remote_autogenerate_max_duration = 1200, -- 20 min
     -- Override thumbnail count, min/max delta
     remote_thumbnail_count = 60,
     remote_min_delta = 15,
@@ -522,7 +526,7 @@ function create_thumbnail_mpv(file_path, timestamp, size, output_path, options)
 
         "--start=" .. tostring(timestamp),
         "--frames=1",
-        "--hr-seek=yes",
+        "--hr-seek=" .. thumbnailer_options.mpv_hr_seek,
         "--no-audio",
         -- Optionally disable subtitles
         (thumbnailer_options.mpv_no_sub and "--no-sub" or nil),

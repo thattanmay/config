@@ -15,9 +15,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ]]--
 --[[
-    mpv_thumbnail_script.lua 0.5.1 - commit 100667f (branch master)
+    mpv_thumbnail_script.lua 0.5.2 - commit f82a221 (branch master)
     https://github.com/TheAMM/mpv_thumbnail_script
-    Built on 2022-11-03 16:39:10
+    Built on 2022-12-11 16:43:01
 ]]--
 local assdraw = require 'mp.assdraw'
 local msg = require 'mp.msg'
@@ -709,6 +709,8 @@ local thumbnailer_options = {
     mpv_profile = "",
     -- Hardware decoding
     mpv_hwdec = "no",
+    -- High precision seek
+    mpv_hr_seek = "yes",
     -- Output debug logs to <thumbnail_path>.log, ala <cache_directory>/<video_filename>/000000.bgra.log
     -- The logs are removed after successful encodes, unless you set mpv_keep_logs below
     mpv_logs = true,
@@ -784,6 +786,8 @@ local thumbnailer_options = {
 
     -- Allow thumbnailing network paths (naive check for "://")
     thumbnail_network = false,
+    -- Same as autogenerate_max_duration but for remote videos
+    remote_autogenerate_max_duration = 1200, -- 20 min
     -- Override thumbnail count, min/max delta
     remote_thumbnail_count = 60,
     remote_min_delta = 15,
@@ -882,6 +886,12 @@ function Thumbnailer:on_video_change(params)
             self:update_state()
             self:check_storyboard_async(function()
                 local duration = mp.get_property_native("duration")
+                local max_duration
+                if self.state.is_remote then
+                    max_duration = thumbnailer_options.autogenerate_max_duration_remote
+                else
+                    max_duration = thumbnailer_options.autogenerate_max_duration
+                end
                 local max_duration = thumbnailer_options.autogenerate_max_duration
 
                 if duration ~= nil and self.state.available and thumbnailer_options.autogenerate then

@@ -3,7 +3,7 @@
 --=============================================================================
 --          This script uses Subliminal to download subtitles,
 --          so make sure to specify your system's Subliminal location below:
-local subliminal = 'C:\\Users\\admin\\AppData\\Local\\Programs\\Python\\Python310\\Scripts\\subliminal.exe'
+local subliminal = 'C:\\Users\\admin\\anaconda3\\Scripts\\subliminal.exe'
 --=============================================================================
 -->>    SUBTITLE LANGUAGE:
 --=============================================================================
